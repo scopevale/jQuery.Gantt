@@ -24,6 +24,7 @@
             waitText: "Please wait...",
             onItemClick: function (data) { return; },
             onAddClick: function (data) { return; },
+            onLeftClick: function (data) { return; },
             onRender: function() { return; },
             scrollToToday: true
         };
@@ -251,6 +252,8 @@
                 core.waitToggle(element, false);
                 settings.onRender();
             },
+
+
             leftPanel: function (element) {
                 /* Left panel */
                 var ganttLeftPanel = $('<div class="leftPanel"/>')
@@ -259,12 +262,39 @@
                     .css("width", "100%"));
 
                 var entries = [];
+                var multiple = 1;
+                
                 $.each(element.data, function (i, entry) {
                     if (i >= element.pageNum * settings.itemsPerPage && i < (element.pageNum * settings.itemsPerPage + settings.itemsPerPage)) {
-                        entries.push('<div class="row name row' + i + (entry.desc ? '' : ' fn-wide') + '" id="rowheader' + i + '" offset="' + i % settings.itemsPerPage * tools.getCellSize() + '">');
-                        entries.push('<span class="fn-label' + (entry.cssClass ? ' ' + entry.cssClass : '') + '">' + entry.name + '</span>');
+                      //entries.push('<div class="row name row' + i + (entry.desc ? '' : ' fn-wide') + '" id="rowheader' + i + '" offset="' + i * tools.getCellSize() + '">');
+                      //entries.push('<span class="fn-label' + (entry.cssClass ? ' ' + entry.cssClass : '') + '">' + entry.name + '</span>');
+                      
+                      entries.push('<div class="row name row' + i + ' " id="rowheader' + i + '" offset="' + i * tools.getCellSize() + '">');
+                      
+                        if (multiple === 1) {
+                            entries.push('<span class="fn-label ' + (entry.cssClass ? ' ' + entry.cssClass : '') + '">' + 
+                                         '<input type="checkbox" value="' + entry.staff_id + '" name="details[resource][]"/> &nbsp;' + entry.display_name + '</span>');
+                        } else {
+                            entries.push('<span class="fn-label ' + (entry.cssClass ? ' ' + entry.cssClass : '') + '">' + 
+                                         '<input type="radio" value="' + entry.staff_id + '" name="details[resource][]"/> &nbsp;' + entry.display_name + '</span>');
+                        }
                         entries.push('</div>');
 
+                        if (entry.xexperience) {
+                            entries.push('<div class="row Exp row' + i + ' " id="RowdId_' + i + '" data-id="exp_' + i + '">');
+                            entries.push('<span class="fn-label' + (entry.cssClass ? ' ' + entry.cssClass : '') + '">' + entry.experience + '</span>');
+                            entries.push('</div>');
+                        }
+                         if (entry.xHrs) {
+                            entries.push('<div class="row Hrs row' + i + ' " id="RowdId_' + i + '" data-id="hrs_' + i + '">');
+                            entries.push('<span class="fn-label' + (entry.cssClass ? ' ' + entry.cssClass : '') + '">' + entry.Hrs + '</span>');
+                            entries.push('</div>');
+                        }
+                       if (entry.xTotalHrs) {
+                            entries.push('<div class="row TotalHrs row' + i + ' " id="RowdId_' + i + '" data-id="tot_hrs_' + i + '">');
+                            entries.push('<span class="fn-label' + (entry.cssClass ? ' ' + entry.cssClass : '') + '">' + entry.TotalHrs + '</span>');
+                            entries.push('</div>');
+                        }
                         if (entry.desc) {
                             entries.push('<div class="row desc row' + i + ' " id="RowdId_' + i + '" data-id="' + entry.id + '">');
                             entries.push('<span class="fn-label' + (entry.cssClass ? ' ' + entry.cssClass : '') + '">' + entry.desc + '</span>');
@@ -276,6 +306,56 @@
                 ganttLeftPanel.append(entries.join(""));
                 return ganttLeftPanel;
             },
+
+
+
+
+
+//             leftPanel: function (element) {
+//                 /* Left panel */
+//                 var ganttLeftPanel = $('<div class="leftPanel"/>')
+//                     .append($('<div class="row spacer"/>')
+//                     .css("height", tools.getCellSize() * element.headerRows + "px")
+//                     .css("width", "100%"));
+
+//                 var entries = [];
+//                 $.each(element.data, function (i, entry) {
+//                     if (i >= element.pageNum * settings.itemsPerPage && i < (element.pageNum * settings.itemsPerPage + settings.itemsPerPage)) {
+//                         entries.push('<div class="row name row' + i + (entry.desc ? '' : ' fn-wide') + '" id="rowheader' + i + '" offset="' + i % settings.itemsPerPage * tools.getCellSize() + '">');
+//                         entries.push('<span class="fn-label' + (entry.cssClass ? ' ' + entry.cssClass : '') + '">' + entry.name + '</span>');
+//                         entries.push('</div>');
+
+//                         if (entry.desc) {
+//                             entries.push('<div class="row desc row' + i + ' " id="RowdId_' + i + '" data-id="' + entry.id + '">');
+//                             entries.push('<span class="fn-label' + (entry.cssClass ? ' ' + entry.cssClass : '') + '">' + entry.desc + '</span>');
+//                             entries.push('</div>');
+//                         }
+
+//                     }
+//                 });
+//                 ganttLeftPanel.append(entries.join(""));
+
+// /* modified from here */
+
+//                 // addNEwClick
+//                 ganttLeftPanel.click(function (e) {
+
+//                     e.stopPropagation();
+
+//                     settings.onLeftClick();
+//                 });
+
+// /* to here */
+
+		
+
+
+//                 return ganttLeftPanel;
+//             },
+
+
+
+
             dataPanel: function (element, width) {
                 var dataPanel = $('<div class="dataPanel" style="width: ' + width + 'px;"/>');
                 /*
@@ -293,7 +373,7 @@
                 // addNEwClick
                 dataPanel.click(function (e) {
 
-                    e.stopPropagation();
+//                    e.stopPropagation();
                     var corrX, corrY;
                     var leftpanel = $(element).find(".fn-gantt .leftPanel");
                     var datapanel = $(element).find(".fn-gantt .dataPanel");
